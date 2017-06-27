@@ -1,34 +1,33 @@
---Задание 2.4. Использование подзапросов
---1.	Выдать всех поставщиков (колонка CompanyName в таблице Suppliers), у которых нет 
---хотя бы одного продукта на складе (UnitsInStock в таблице Products равно 0). Использовать 
---вложенный SELECT для этого запроса с использованием оператора IN. 
+	--2.4.1.	Выдать всех поставщиков (колонка CompanyName в таблице Suppliers), у которых нет 
+	--хотя бы одного продукта на складе (UnitsInStock в таблице Products равно 0). Использовать 
+	--вложенный SELECT для этого запроса с использованием оператора IN. 
 
-SELECT suppliers.CompanyName
-FROM dbo.Suppliers suppliers
-WHERE 0 IN (
-	SELECT products.UnitsInStock
-	FROM dbo.Products products
-	WHERE suppliers.SupplierID = products.SupplierID
-)
+	SELECT s.CompanyName
+	FROM dbo.Suppliers AS s
+	WHERE 0 IN (
+		SELECT p.UnitsInStock
+		FROM dbo.Products AS p
+		WHERE s.SupplierID = p.SupplierID
+	)
 
---2.	Выдать всех продавцов, которые имеют более 150 заказов. Использовать вложенный SELECT.
+	--2.4.2	Выдать всех продавцов, которые имеют более 150 заказов. Использовать вложенный SELECT.
 
-SELECT CONCAT(employees.LastName, ' ', employees.FirstName)
-FROM dbo.Employees employees
-WHERE 
-(
-SELECT COUNT(*)
-FROM dbo.Orders orders
-WHERE employees.EmployeeID = orders.EmployeeID 
-) > 150
+	SELECT CONCAT(e.LastName, ' ', e.FirstName)
+	FROM dbo.Employees AS e
+	WHERE 
+	(
+	SELECT COUNT(*)
+	FROM dbo.Orders AS o
+	WHERE e.EmployeeID = o.EmployeeID 
+	) > 150
 
-----3.	Выдать всех заказчиков (таблица Customers), которые не имеют ни одного заказа (подзапрос по таблице Orders). Использовать оператор EXISTS.
+	--2.4.3.	Выдать всех заказчиков (таблица Customers), которые не имеют ни одного заказа (подзапрос по таблице Orders). Использовать оператор EXISTS.
 
-SELECT customers.CompanyName
-FROM dbo.Customers customers
-WHERE NOT EXISTS
-(
-SELECT COUNT(*)
-FROM dbo.Orders orders
-WHERE orders.CustomerID = customers.CustomerID
-)
+	SELECT c.CompanyName
+	FROM dbo.Customers AS c
+	WHERE NOT EXISTS
+	(
+	SELECT COUNT(*)
+	FROM dbo.Orders AS o
+	WHERE o.CustomerID = c.CustomerID
+	)
